@@ -1,0 +1,26 @@
+---
+
+- name: Configure webserver 
+  hosts: nginx
+  gather_facts: no
+  become: yes
+
+  tasks:
+
+  - name: Wait for system to become reachable
+    ansible.builtin.wait_for_connection:
+
+  - name: Gather facts manually
+    ansible.builtin.setup:
+
+  - name: Set a hostname
+    ansible.builtin.hostname:
+      name: nginx
+
+  - name: Install nginx
+    ansible.builtin.apt:
+      name: nginx
+      state: present
+      update_cache: yes
+
+     
