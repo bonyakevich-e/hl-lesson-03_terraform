@@ -19,7 +19,7 @@
 
 Для связки Ansible и Terraform используем [Ansible Provider](https://registry.terraform.io/providers/ansible/ansible/latest/docs). 
 В Terraform подключаем данный provider в файле `provider.tf`:
-```
+```HCL
 terraform {
   required_providers {
     yandex = {
@@ -33,20 +33,20 @@ terraform {
 }
 ```
 Для Ansible устанавливаем collection `cloud.terraform`:
-```
+```console
 $ ansible-galaxy collection install cloud.terraform
 ```
 
 Описываем параметры ресурсов в файле `main.tf`. 
 
 Указываем зону по умолчанию:
-```
+```HCL
 provider "yandex" {
   zone = "ru-central1-b"
 }
 ```
 Создаем диск для нашей виртуальной машины:
-```
+```HCL
 resource "yandex_compute_disk" "boot-disk-1" {
   name = "boot-disk-1"
   type = "network-hdd"
@@ -56,7 +56,7 @@ resource "yandex_compute_disk" "boot-disk-1" {
 }
 ```
 Создаем подсеть для нашей виртуальной машины:
-```
+```HCL
 resource "yandex_vpc_network" "otus-network" {
   name = "otus-network"
 }
@@ -68,7 +68,7 @@ resource "yandex_vpc_subnet" "otus-subnet" {
 }
 ```
 Создаем виртуальную машину:
-```
+```HCL
 resource "yandex_compute_instance" "nginx" {
   name = "nginx"
 
@@ -94,7 +94,7 @@ resource "yandex_compute_instance" "nginx" {
 Здесь, в metadata указан пользователь, для которого нужно загрузить публичный ключ. По умолчанию, в яндексе для образов Ubuntu создается пользователь __ubuntu__.
 
 Описываем ресурс для выполения ansible плейбука:
-```
+```HCL
 resource "ansible_playbook" "webserver_provision" {
   playbook = "playbook.yml"
 
@@ -119,7 +119,7 @@ resource "ansible_playbook" "webserver_provision" {
 Ссылки на примеры использования Ansible Provider - [раз](https://github.com/ansible/terraform-provider-ansible), [два](https://github.com/ansible/terraform-provider-ansible/blob/main/examples/ansible_playbook/end-to-end.tf). 
 
 Выводим внутренний и внешний ip нашей виртуальной машины: 
-```
+```HCL
 output "internal_ip_address_vm_1" {
   value = yandex_compute_instance.nginx.network_interface.0.ip_address
 }
@@ -129,7 +129,7 @@ output "external_ip_address_vm_1" {
 }
 ```
 Описываем playbook, который будет автоматически выполняться после создания виртуальной машины:
-```
+```yaml
 ---
 
 - name: Configure webserver 
@@ -160,7 +160,7 @@ Terraform пытается сразу запустить playbook после с�
 ---------------
 #### РЕЗУЛЬТАТ
 Для развёртывания стенда выполняем:
-```
+```console
 terraform apply
 ```
 Terraform создаст нужные ресурсы и запустит ansible playbook для настройки виртуальной машины
