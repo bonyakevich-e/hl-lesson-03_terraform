@@ -32,6 +32,9 @@ terraform {
   required_version = ">= 0.13"
 }
 ```
+```console
+$ terraform init
+```
 Для Ansible устанавливаем collection `cloud.terraform`:
 ```console
 $ ansible-galaxy collection install cloud.terraform
